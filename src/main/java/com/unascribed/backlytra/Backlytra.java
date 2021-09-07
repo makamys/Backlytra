@@ -143,6 +143,9 @@ public class Backlytra {
 	
 	@SubscribeEvent
 	public void onPostPlayerTick(PlayerTickEvent e) {
+	    if(e.phase == Phase.START) {
+	        Backlytra.moveEntityWithHeading(e.player, e.player.moveStrafing, e.player.moveForward, false);
+	    }
 		if (e.phase == Phase.END) {
 			boolean isElytraFlying = MethodImitations.isElytraFlying(e.player);
 			if (e.player instanceof EntityPlayerMP && isElytraFlying) {
@@ -231,7 +234,12 @@ public class Backlytra {
 	public static DamageSource flyIntoWall = (new DamageSource("flyIntoWall")).setDamageBypassesArmor();
 	
 	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward) {
-		if (e.isServerWorld() && !e.isInWater() && !e.handleLavaMovement()) {
+		return moveEntityWithHeading(e, strafe, forward, true);
+	}
+	
+	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward, boolean fromHook) {
+	    if(fromHook) return false;
+	    if (e.isServerWorld() && !e.isInWater() && !e.handleLavaMovement()) {
 			if (MethodImitations.isElytraFlying(e)) {
 				if (e.motionY > -0.5D) {
 					e.fallDistance = 1.0F;
