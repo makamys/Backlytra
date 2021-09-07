@@ -28,10 +28,10 @@ public class BacklytraTransformer extends MalisisClassTransformer {
 	@Override
 	public void registerHooks() {
 		register(moveEntityWithHeadingHook());
-		register(getEyeHeightHook());
-		register(rotateCorpseHook());
-		register(movedTooQuicklyHook());
-		register(setRotationAnglesHook());
+		//register(getEyeHeightHook());
+		//register(rotateCorpseHook());
+		//register(movedTooQuicklyHook());
+		//register(setRotationAnglesHook());
 	}
 	
 	private AsmHook setRotationAnglesHook() {
