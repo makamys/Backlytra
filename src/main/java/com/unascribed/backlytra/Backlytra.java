@@ -1,7 +1,13 @@
 package com.unascribed.backlytra;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Enums;
@@ -237,14 +243,44 @@ public class Backlytra {
 		return moveEntityWithHeading(e, strafe, forward, true);
 	}
 	
+	// Not using a map because I want the player entity on the client and server side to be considered
+	// different entries (even though their hash codes are the same).
+    private static List<Pair<EntityLivingBase, MotionInfo>> infos = new ArrayList<>();
+	
+	public static class MotionInfo {
+		public double lastMotionX, lastMotionY, lastMotionZ;
+		public double lastPosX, lastPosY, lastPosZ;
+		public boolean usingElytra;
+		public boolean wasUsingElytra;
+		
+		public EntityLivingBase entity;
+		
+		public MotionInfo(EntityLivingBase entity) {
+			this.entity = entity;
+		}
+	}
+	
+	public static MotionInfo getMotionInfo(EntityLivingBase e) {
+		for(Pair<EntityLivingBase, MotionInfo> entry : infos) {
+			if(entry.getKey() == e) {
+				return entry.getValue();
+			}
+		}
+		MotionInfo info = new MotionInfo(e);
+		infos.add(Pair.of(e, info));
+		return info;
+	}
+	
 	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward, boolean fromHook) {
-	    if(fromHook) return false;
+	    if(!fromHook) return false;
+	    // note: isServerWorld() returns true even on the client in EntityPlayerSP
 	    if (e.isServerWorld() && !e.isInWater() && !e.handleLavaMovement()) {
 			if (MethodImitations.isElytraFlying(e)) {
+				MotionInfo info = getMotionInfo(e);
 				if (e.motionY > -0.5D) {
 					e.fallDistance = 1.0F;
 				}
-
+				
 				Vec3 vec3d = e.getLookVec();
 				float f = e.rotationPitch * 0.017453292F;
 				double d6 = Math.sqrt(vec3d.xCoord * vec3d.xCoord + vec3d.zCoord * vec3d.zCoord);
@@ -252,7 +288,19 @@ public class Backlytra {
 				double d1 = vec3d.lengthVector();
 				float f4 = MathHelper.cos(f);
 				f4 = (float) ((double) f4 * (double) f4 * Math.min(1.0D, d1 / 0.4D));
-				e.motionY += -0.08D + f4 * 0.06D;
+				if(!fromHook) {
+					e.motionX = info.lastMotionX;
+					e.motionY = info.lastMotionY;
+					e.motionZ = info.lastMotionZ;
+				}
+				
+				System.out.println("dx " + (info.lastPosX - e.posX));
+				
+				e.motionX = 0.125;
+				e.motionY = 0;
+				e.motionZ = 0;
+				
+				/*e.motionY += -0.08D + f4 * 0.06D;
 
 				if (e.motionY < 0.0D && d6 > 0.0D) {
 					double d2 = e.motionY * -0.1D * f4;
@@ -275,8 +323,19 @@ public class Backlytra {
 
 				e.motionX *= 0.9900000095367432D;
 				e.motionY *= 0.9800000190734863D;
-				e.motionZ *= 0.9900000095367432D;
-				e.moveEntity(e.motionX, e.motionY, e.motionZ);
+				e.motionZ *= 0.9900000095367432D;*/
+				
+				info.lastPosX = e.posX;
+				info.lastPosY = e.posY;
+				info.lastPosZ = e.posZ;
+				
+				if(fromHook) {
+					e.moveEntity(e.motionX, e.motionY, e.motionZ);	
+				} else {
+					info.lastMotionX = e.motionX;
+					info.lastMotionY = e.motionY;
+					info.lastMotionZ = e.motionZ;
+				}
 
 				if (e.isCollidedHorizontally && !e.worldObj.isRemote) {
 					double d10 = Math.sqrt(e.motionX * e.motionX + e.motionZ * e.motionZ);
