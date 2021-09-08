@@ -42,7 +42,7 @@ public class LayerBetterElytra {
 			if (colorIndex < 0 || colorIndex == 15)
 				GL11.glColor3f(1, 1, 1);
 			else {
-				Color color = new Color(ItemDye.dyeColors[colorIndex]);
+				Color color = new Color(ItemDye.field_150922_c[colorIndex]); // dyeColors
 				float r = color.getRed() / 255F;
 				float g = color.getGreen() / 255F;
 				float b = color.getBlue() / 255F;

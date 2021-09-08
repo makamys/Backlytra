@@ -13,7 +13,7 @@ public class ElytraSound extends MovingSound {
 		super(new ResourceLocation("backlytra", "item.elytra.flying"));
 		this.field_189405_m = p_i47113_1_;
 		this.repeat = true;
-		this.repeatDelay = 0;
+		this.field_147665_h = 0; // repeatDelay
 		this.volume = 0.1F;
 	}
 
@@ -46,9 +46,11 @@ public class ElytraSound extends MovingSound {
 			float f2 = 0.8F;
 
 			if (this.volume > 0.8F) {
-				this.pitch = 1.0F + (this.volume - 0.8F);
+				// pitch
+				this.field_147663_c = 1.0F + (this.volume - 0.8F);
 			} else {
-				this.pitch = 1.0F;
+				// pitch
+				this.field_147663_c = 1.0F;
 			}
 		} else {
 			this.donePlaying = true;

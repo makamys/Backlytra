@@ -186,8 +186,8 @@ public class Backlytra {
 		if (e.phase == Phase.END && e.world instanceof WorldServer) {
 			WorldServer ws = (WorldServer)e.world;
 			for (EntityTrackerEntry ete : (Set<EntityTrackerEntry>)ws.getEntityTracker().trackedEntities) {
-				if (ete.trackedEntity instanceof EntityLivingBase) {
-					EntityLivingBase elb = (EntityLivingBase) ete.trackedEntity;
+				if (ete.myEntity instanceof EntityLivingBase) {
+					EntityLivingBase elb = (EntityLivingBase) ete.myEntity;
 					boolean flying = MethodImitations.isElytraFlying(elb);
 					if (!flying && FieldImitations.get(ete, "wasForcingVelocityUpdates", false)) {
 						ete.sendVelocityUpdates = false;
@@ -273,8 +273,8 @@ public class Backlytra {
 	
 	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward, boolean fromHook) {
 	    if(!fromHook) return false;
-	    // note: isServerWorld() returns true even on the client in EntityPlayerSP
-	    if (e.isServerWorld() && !e.isInWater() && !e.handleLavaMovement()) {
+	    // note: isClientWorld() returns true even on the client in EntityPlayerSP
+	    if (e.isClientWorld() && !e.isInWater() && !e.handleLavaMovement()) {
 			if (MethodImitations.isElytraFlying(e)) {
 				MotionInfo info = getMotionInfo(e);
 				if (e.motionY > -0.5D) {

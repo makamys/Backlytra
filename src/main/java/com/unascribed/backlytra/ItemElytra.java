@@ -14,13 +14,13 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class ItemElytra extends Item {
 	public ItemElytra() {
 		this.maxStackSize = 1;
-		this.setMaxDurability(Backlytra.durability);
+		this.setMaxDamage(Backlytra.durability);
 		this.setCreativeTab(CreativeTabs.tabTransport);
 		BlockDispenser.dispenseBehaviorRegistry.putObject(this, BlockDispenser.dispenseBehaviorRegistry.getObject(Items.iron_chestplate));
 	}
 
 	public static boolean isBroken(ItemStack stack) {
-		return stack.getMetadata() < stack.getMaxDurability() - 1;
+		return stack.getItemDamage() < stack.getMaxDamage() - 1;
 	}
 
 	/**
@@ -59,6 +59,6 @@ public class ItemElytra extends Item {
 		if(color == -1 || color == 15)
 			return -1;
 
-		return ItemDye.dyeColors[color];
+		return ItemDye.field_150922_c[color]; // dyeColors
 	}
 }

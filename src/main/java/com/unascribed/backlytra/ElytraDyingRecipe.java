@@ -52,7 +52,7 @@ public class ElytraDyingRecipe implements IRecipe {
 			ItemStack stack = var1.getStackInSlot(i);
 			if (stack != null) {
 				if (stack.getItem() instanceof ItemDye)
-					source = stack.getMetadata();
+					source = stack.getItemDamage();
 				else
 					target = stack;
 			}

@@ -71,7 +71,6 @@ dependencies {
 
 minecraft {
 	version = config.forge
-	mappings = config.mappings
 
 	runDir = "minecraft"
 
