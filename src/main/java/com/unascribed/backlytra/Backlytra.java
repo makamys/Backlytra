@@ -149,6 +149,12 @@ public class Backlytra {
 	
 	@SubscribeEvent
 	public void onPostPlayerTick(PlayerTickEvent e) {
+		MotionInfo info = getMotionInfo(e.player);
+		if(MethodImitations.isElytraFlying(e.player)) {
+			System.out.println(String.format("dx: %f, dy: %f, dz: %f", (e.player.posX - info.lastPosX), (e.player.posY - info.lastPosY), (e.player.posZ - info.lastPosZ)));
+			System.out.println(String.format("px: %f, py: %f, pz: %f%s", e.player.posX, e.player.posY, e.player.posZ, e.phase == Phase.END ? "\n" : ""));
+		}
+		
 	    if(e.phase == Phase.START) {
 	        Backlytra.moveEntityWithHeading(e.player, e.player.moveStrafing, e.player.moveForward, false);
 	    }
@@ -317,7 +323,6 @@ public class Backlytra {
 				}
 				
 				System.out.println(String.format("mx: %f, my: %f, mz: %f", e.motionX, e.motionY, e.motionZ));
-				System.out.println(String.format("dx: %f, dy: %f, dz: %f", (e.posX - info.lastPosX), (e.posY - info.lastPosY), (e.posZ - info.lastPosZ)));
 				
 				double d8 = Math.sqrt(e.motionX * e.motionX + e.motionZ * e.motionZ);
 				
@@ -350,7 +355,7 @@ public class Backlytra {
 				info.lastPosY = e.posY;
 				info.lastPosZ = e.posZ;
 				
-				System.out.println(String.format("mx: %f, my: %f, mz: %f\n", e.motionX, e.motionY, e.motionZ));
+				System.out.println(String.format("mx: %f, my: %f, mz: %f", e.motionX, e.motionY, e.motionZ));
 				
 				if(fromHook) {
 					e.moveEntity(e.motionX, e.motionY, e.motionZ);	
