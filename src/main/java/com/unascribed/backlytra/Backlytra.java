@@ -279,7 +279,7 @@ public class Backlytra {
 	}
 	
 	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward, boolean fromHook) {
-	    if(fromHook) return false;
+	    if(fromHook == !Boolean.valueOf(System.getProperty("backlytra.hook"))) return false;
 	    // note: isClientWorld() returns true even on the client in EntityPlayerSP
 	    if (e.isClientWorld() && !e.isInWater() && !e.handleLavaMovement()) {
 	    	MotionInfo info = getMotionInfo(e);
