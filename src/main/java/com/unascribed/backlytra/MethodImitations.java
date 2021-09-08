@@ -11,12 +11,12 @@ public class MethodImitations {
 	}
 	
 	public static void setElytraFlying(EntityLivingBase e, boolean state) {
-		MotionInfo info = Backlytra.getMotionInfo(e);
+		/*MotionInfo info = Backlytra.getMotionInfo(e);
 		info.lastMotionX = e.motionX;
 		info.lastMotionY = e.motionY;
 		info.lastMotionZ = e.motionZ;
 		info.wasUsingElytra = info.usingElytra;
-		info.usingElytra = state;
+		info.usingElytra = state;*/
 		
 		byte b0 = e.getDataWatcher().getWatchableObjectByte(0);
 

@@ -250,6 +250,7 @@ public class Backlytra {
 	public static class MotionInfo {
 		public double lastMotionX, lastMotionY, lastMotionZ;
 		public double lastPosX, lastPosY, lastPosZ;
+		public int lastElytraTick = Integer.MIN_VALUE;
 		public boolean usingElytra;
 		public boolean wasUsingElytra;
 		
@@ -272,11 +273,20 @@ public class Backlytra {
 	}
 	
 	public static boolean moveEntityWithHeading(EntityLivingBase e, float strafe, float forward, boolean fromHook) {
-	    if(!fromHook) return false;
+	    if(fromHook) return false;
 	    // note: isClientWorld() returns true even on the client in EntityPlayerSP
 	    if (e.isClientWorld() && !e.isInWater() && !e.handleLavaMovement()) {
+	    	MotionInfo info = getMotionInfo(e);
+	    	info.wasUsingElytra = info.usingElytra;
+	    	info.usingElytra = MethodImitations.isElytraFlying(e);
 			if (MethodImitations.isElytraFlying(e)) {
-				MotionInfo info = getMotionInfo(e);
+				if(!info.wasUsingElytra) {
+					System.out.println("Activated elytra");
+					info.lastMotionX = e.motionX;
+					info.lastMotionY = e.motionY;
+					info.lastMotionZ = e.motionZ;
+				}
+				
 				if (e.motionY > -0.5D) {
 					e.fallDistance = 1.0F;
 				}
@@ -284,23 +294,34 @@ public class Backlytra {
 				Vec3 vec3d = e.getLookVec();
 				float f = e.rotationPitch * 0.017453292F;
 				double d6 = Math.sqrt(vec3d.xCoord * vec3d.xCoord + vec3d.zCoord * vec3d.zCoord);
-				double d8 = Math.sqrt(e.motionX * e.motionX + e.motionZ * e.motionZ);
 				double d1 = vec3d.lengthVector();
 				float f4 = MathHelper.cos(f);
 				f4 = (float) ((double) f4 * (double) f4 * Math.min(1.0D, d1 / 0.4D));
+				System.out.println(String.format("mx: %f, my: %f, mz: %f", e.motionX, e.motionY, e.motionZ));
 				if(!fromHook) {
 					e.motionX = info.lastMotionX;
 					e.motionY = info.lastMotionY;
 					e.motionZ = info.lastMotionZ;
+					
+			        if (Math.abs(e.motionX) < 0.005D) {
+			            e.motionX = 0.0D;
+			        }
+
+			        if (Math.abs(e.motionY) < 0.005D) {
+			            e.motionY = 0.0D;
+			        }
+
+			        if (Math.abs(e.motionZ) < 0.005D) {
+			            e.motionZ = 0.0D;
+			        }
 				}
 				
-				System.out.println("dx " + (info.lastPosX - e.posX));
+				System.out.println(String.format("mx: %f, my: %f, mz: %f", e.motionX, e.motionY, e.motionZ));
+				System.out.println(String.format("dx: %f, dy: %f, dz: %f", (e.posX - info.lastPosX), (e.posY - info.lastPosY), (e.posZ - info.lastPosZ)));
 				
-				e.motionX = 0.125;
-				e.motionY = 0;
-				e.motionZ = 0;
+				double d8 = Math.sqrt(e.motionX * e.motionX + e.motionZ * e.motionZ);
 				
-				/*e.motionY += -0.08D + f4 * 0.06D;
+				e.motionY += -0.08D + f4 * 0.06D;
 
 				if (e.motionY < 0.0D && d6 > 0.0D) {
 					double d2 = e.motionY * -0.1D * f4;
@@ -323,11 +344,13 @@ public class Backlytra {
 
 				e.motionX *= 0.9900000095367432D;
 				e.motionY *= 0.9800000190734863D;
-				e.motionZ *= 0.9900000095367432D;*/
+				e.motionZ *= 0.9900000095367432D;
 				
 				info.lastPosX = e.posX;
 				info.lastPosY = e.posY;
 				info.lastPosZ = e.posZ;
+				
+				System.out.println(String.format("mx: %f, my: %f, mz: %f\n", e.motionX, e.motionY, e.motionZ));
 				
 				if(fromHook) {
 					e.moveEntity(e.motionX, e.motionY, e.motionZ);	
